@@ -62,7 +62,7 @@ var form = {
   }
 };
 
-validation(form);
+console.log(validation(form));
 
 function rememberCount() {
   var counter = 0;
