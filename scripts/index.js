@@ -121,7 +121,9 @@ function validation(obj) {
       key.errorMessage = 'Fill the field between ' + key.validationRules.minLength + ' and ' + key.validationRules.maxLength;
       console.log(key.errorMessage);
       return false;
-    } else return true;
+    } else {
+      return true;
+    }
   }
 
 
