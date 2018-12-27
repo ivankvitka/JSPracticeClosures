@@ -103,10 +103,10 @@ function rememberCountAnalog() {
 }
 
 function validation(obj) {
-  function checkRequired(key) {
-    if (!key.value && key.validationRules.required) {
-      key.errorMessage = 'Field is required\n';
-      console.log(key.errorMessage);
+  function checkRequired(objectField) {
+    if (!objectField.value && objectField.validationRules.required) {
+      objectField.errorMessage = 'Field is required\n';
+      console.log(objectField.errorMessage);
       return false;
     }
     else {
@@ -114,45 +114,46 @@ function validation(obj) {
     }
   }
 
-  function checkMaxMinLength(key) {
-    if (!key.validationRules.minLength && !key.validationRules.maxLength) {
+  function checkMaxMinLength(objectField) {
+    if (!objectField.validationRules.minLength && !objectField.validationRules.maxLength) {
       return true;
-    } else if (key.value.length > 0 && (key.value.length < key.validationRules.minLength || key.value.length > key.validationRules.maxLength)) {
-      key.errorMessage = 'Fill the field between ' + key.validationRules.minLength + ' and ' + key.validationRules.maxLength;
-      console.log(key.errorMessage);
+    } else if (objectField.value.length > 0 && (objectField.value.length < objectField.validationRules.minLength || objectField.value.length > objectField.validationRules.maxLength)) {
+      objectField.errorMessage = 'Fill the field between ' + objectField.validationRules.minLength + ' and ' + objectField.validationRules.maxLength;
+      console.log(objectField.errorMessage);
       return false;
     } else {
       return true;
     }
   }
 
-
   function checkEmail(email) {
     var value = email.value;
     var valid = true;
     var errorMsg = email.errorMessage;
 
-    if (email.validationRules.required || (!email.validationRules.required && email.value.length > 0)) {
-      if (email.validationRules.email && !value) {
+    if (email.validationRules.email) {
+      if (email.validationRules.required && !value) {
         valid = false;
-      } else if (value.indexOf('@') === -1) {
-        errorMsg = 'Your email got to have "@"';
-        console.log(errorMsg);
-        valid = false;
-      } else {
-        var parts = value.split('@');
-        var domain = parts[1];
-        if (domain.indexOf('.') === -1) {
-          errorMsg = 'Your email got to have "."';
+      } else if (!email.validationRules.required && email.value.length > 0) {
+        if (value.indexOf('@') === -1) {
+          errorMsg = 'Your email got to have "@"';
           console.log(errorMsg);
           valid = false;
         } else {
-          var domainParts = domain.split('.');
-          var ext = domainParts[1];
-          if (ext.length > 4 || ext.length < 2) {
-            errorMsg = 'your domain name got to be between 2 and 4';
+          var parts = value.split('@');
+          var domain = parts[1];
+          if (domain.indexOf('.') === -1) {
+            errorMsg = 'Your email got to have "."';
             console.log(errorMsg);
             valid = false;
+          } else {
+            var domainParts = domain.split('.');
+            var ext = domainParts[1];
+            if (ext.length > 4 || ext.length < 2) {
+              errorMsg = 'your domain name got to be between 2 and 4';
+              console.log(errorMsg);
+              valid = false;
+            }
           }
         }
       }
@@ -160,15 +161,10 @@ function validation(obj) {
     return valid;
   }
 
-
   for (var key in obj) {
-    if (!checkRequired(obj[key]) || !checkMaxMinLength(obj[key])) {
+    if (!checkRequired(obj[key]) || !checkMaxMinLength(obj[key]) || !checkEmail(obj[key])) {
       return false;
     }
-  }
-
-  if (!checkEmail(obj.email)) {
-    return false;
   }
   return true;
 }
